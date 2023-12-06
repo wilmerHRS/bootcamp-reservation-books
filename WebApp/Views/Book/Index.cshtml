@@ -1,0 +1,66 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Libros Page";
+}
+
+<style>
+    .search {
+        max-width: 350px;
+    }
+</style>
+
+@section Scripts{
+    <script src="~/js/books.js"></script>
+}
+
+<h1 class="fs-2 pb-3">Libros</h1>
+
+<div class="d-flex justify-content-end gap-2 pb-5">
+    <input id="input-search" class="form-control search" type="text" placeholder="Ingrese código o nombre del libro" aria-label="default input example">
+    <button id="btn-search" type="button" class="btn btn-primary px-4">Buscar</button>
+</div>
+
+<table class="table table-hover" id="table-book">
+    <thead>
+        <tr>
+            <th scope="col">Item</th>
+            <th scope="col">Código</th>
+            <th scope="col">Título</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Fecha Reserva</th>
+        </tr>
+    </thead>
+    <tbody id="table-body-book"></tbody>
+</table>
+
+
+<div class="modal none" id="modal-confirmation" tabindex="-1" aria-labelledby="exampleModalLiveLabel" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-5">
+            <div class="pb-3">
+                <h6 class="fs-3 text-center">¿Está seguro que desea reservar?</h6>
+            </div>
+            <div class="d-flex justify-content-evenly mx-5">
+                <button id="btn-modal-confirmation" type="button" class="btn btn-primary">ACEPTAR</button>
+                <button id="btn-modal-cancelation" type="button" class="btn btn-danger">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal none" id="modal-alert" tabindex="-1" aria-labelledby="exampleModalLiveLabel" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-5">
+            <div class="pb-3">
+                <h6 class="fs-3 text-center" id="title-modal-alert">¡Este libro ya esta reservado!</h6>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button id="btn-modal-alert" type="button" class="btn btn-primary">ACEPTAR</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* <div class="modal-backdrop fade show"></div> *@

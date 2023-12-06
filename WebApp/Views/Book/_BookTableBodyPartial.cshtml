@@ -1,0 +1,23 @@
+﻿@using BookServiceReference;
+
+@model BookResponseDto[]
+
+@if (Model != null)
+{
+    @foreach (BookResponseDto book in Model)
+    {
+        <tr class="tr-book">
+            <th scope="row" class="th-book">@book.IdBook</th>
+            <td>@book.VarCode</td>
+            <td>@book.VarTitle</td>
+            <td class="td-book">@(book.IsReserved ? "RESERVADO" : "NO RESERVADO")</td>
+            <td>@book.DtimeDateReservation</td>
+        </tr>
+    }
+}
+else
+{
+    <tr>
+        <td colspan="4" class="text-center text-danger">No hay registros</td>
+    </tr>
+}

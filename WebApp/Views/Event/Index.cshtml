@@ -1,0 +1,38 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Eventos Page";
+}
+
+<style>
+    .search {
+        max-width: 350px;
+    }
+</style>
+
+@section Scripts{
+    <script src="~/js/events.js"></script>
+}
+
+<h1 class="fs-2 pb-3">Eventos</h1>
+
+<div class="d-flex justify-content-end gap-2 pb-5">
+    <input id="input-search" class="form-control search" type="text" placeholder="Ingrese código o nombre del libro" aria-label="default input example">
+    <button id="btn-search" type="button" class="btn btn-primary px-4">Buscar</button>
+</div>
+
+<table class="table" id="table-book">
+    <thead>
+        <tr>
+            <th scope="col">Código</th>
+            <th scope="col">Título</th>
+            <th scope="col">Usuario</th>
+            <th scope="col">Evento</th>
+            <th scope="col">Fecha Registro</th>
+        </tr>
+    </thead>
+    <tbody id="table-body-event"></tbody>
+</table>
+
+
