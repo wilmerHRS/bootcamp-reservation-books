@@ -87,7 +87,7 @@
         const { user } = userData;
 
         $.ajax({
-            url: `CreateReservation?idBook=${idBook}&idUser=${user.idUser}`,
+            url: `/Book/CreateReservation?idBook=${idBook}&idUser=${user.idUser}`,
             type: "POST",
             headers: {
                 'Authorization': `Bearer ${userData.accessToken}`
