@@ -33,7 +33,7 @@
 
         const body = {
             idUser: user.idUser,
-            user: `${user.varFirstName} ${user.varLastName}`,
+            user: `${user.firstName} ${user.lastName}`,
             book: idBook,
             description: title,
             registered: new Date()
@@ -73,7 +73,7 @@
             error: function (xhr, status, err) {
 
                 if (xhr.status === 401) {
-                    window.location.href = '/Login")';
+                    window.location.href = "/Login";
                     return;
                 }
 
@@ -146,4 +146,3 @@ function openModalAlert(title = "¡Este libro ya esta reservado!") {
 function closeModalAlert() {
     $("#modal-alert").fadeOut();
 }
-// MODALES

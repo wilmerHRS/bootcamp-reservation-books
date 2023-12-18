@@ -8,10 +8,10 @@
     {
         <tr class="tr-book">
             <th scope="row" class="th-book">@book.IdBook</th>
-            <td>@book.VarCode</td>
-            <td>@book.VarTitle</td>
-            <td class="td-book">@(book.IsReserved ? "RESERVADO" : "NO RESERVADO")</td>
-            <td>@book.DtimeDateReservation</td>
+            <td>@book.Code</td>
+            <td>@book.Title</td>
+            <td class="td-book">@((bool)book.IsAvailable! ? "NO RESERVADO" : "RESERVADO")</td>
+            <td>@book.DateReservation</td>
         </tr>
     }
 }

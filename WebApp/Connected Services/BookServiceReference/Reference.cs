@@ -18,26 +18,41 @@ namespace BookServiceReference
     public partial class BookResponseDtoEF : object
     {
         
-        private System.DateTime DtimeCreatedAtField;
+        private string CodeField;
+        
+        private System.DateTime CreatedAtField;
         
         private int IdBookField;
         
-        private System.Nullable<int> IntStatusField;
+        private System.Nullable<bool> IsAvailableField;
         
-        private string VarCodeField;
+        private System.Nullable<int> StatusField;
         
-        private string VarTitleField;
+        private string TitleField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.DateTime DtimeCreatedAt
+        public string Code
         {
             get
             {
-                return this.DtimeCreatedAtField;
+                return this.CodeField;
             }
             set
             {
-                this.DtimeCreatedAtField = value;
+                this.CodeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.DateTime CreatedAt
+        {
+            get
+            {
+                return this.CreatedAtField;
+            }
+            set
+            {
+                this.CreatedAtField = value;
             }
         }
         
@@ -55,41 +70,41 @@ namespace BookServiceReference
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<int> IntStatus
+        public System.Nullable<bool> IsAvailable
         {
             get
             {
-                return this.IntStatusField;
+                return this.IsAvailableField;
             }
             set
             {
-                this.IntStatusField = value;
+                this.IsAvailableField = value;
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string VarCode
+        public System.Nullable<int> Status
         {
             get
             {
-                return this.VarCodeField;
+                return this.StatusField;
             }
             set
             {
-                this.VarCodeField = value;
+                this.StatusField = value;
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string VarTitle
+        public string Title
         {
             get
             {
-                return this.VarTitleField;
+                return this.TitleField;
             }
             set
             {
-                this.VarTitleField = value;
+                this.TitleField = value;
             }
         }
     }
@@ -100,43 +115,56 @@ namespace BookServiceReference
     public partial class BookResponseDto : object
     {
         
-        private System.DateTime DtimeCreatedAtField;
+        private string CodeField;
         
-        private System.Nullable<System.DateTime> DtimeDateReservationField;
+        private System.DateTime CreatedAtField;
+        
+        private System.Nullable<System.DateTime> DateReservationField;
         
         private int IdBookField;
         
-        private System.Nullable<int> IntStatusField;
+        private System.Nullable<bool> IsAvailableField;
         
-        private bool IsReservedField;
+        private System.Nullable<int> StatusField;
         
-        private string VarCodeField;
-        
-        private string VarTitleField;
+        private string TitleField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.DateTime DtimeCreatedAt
+        public string Code
         {
             get
             {
-                return this.DtimeCreatedAtField;
+                return this.CodeField;
             }
             set
             {
-                this.DtimeCreatedAtField = value;
+                this.CodeField = value;
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<System.DateTime> DtimeDateReservation
+        public System.DateTime CreatedAt
         {
             get
             {
-                return this.DtimeDateReservationField;
+                return this.CreatedAtField;
             }
             set
             {
-                this.DtimeDateReservationField = value;
+                this.CreatedAtField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<System.DateTime> DateReservation
+        {
+            get
+            {
+                return this.DateReservationField;
+            }
+            set
+            {
+                this.DateReservationField = value;
             }
         }
         
@@ -154,54 +182,41 @@ namespace BookServiceReference
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<int> IntStatus
+        public System.Nullable<bool> IsAvailable
         {
             get
             {
-                return this.IntStatusField;
+                return this.IsAvailableField;
             }
             set
             {
-                this.IntStatusField = value;
+                this.IsAvailableField = value;
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool IsReserved
+        public System.Nullable<int> Status
         {
             get
             {
-                return this.IsReservedField;
+                return this.StatusField;
             }
             set
             {
-                this.IsReservedField = value;
+                this.StatusField = value;
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string VarCode
+        public string Title
         {
             get
             {
-                return this.VarCodeField;
+                return this.TitleField;
             }
             set
             {
-                this.VarCodeField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string VarTitle
-        {
-            get
-            {
-                return this.VarTitleField;
-            }
-            set
-            {
-                this.VarTitleField = value;
+                this.TitleField = value;
             }
         }
     }
@@ -212,22 +227,22 @@ namespace BookServiceReference
     public partial class ReservationRequest : object
     {
         
-        private System.Nullable<System.DateTime> DtimeDateReservationField;
+        private System.Nullable<System.DateTime> DateReservationField;
         
         private int IdBookField;
         
         private int IdUserField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<System.DateTime> DtimeDateReservation
+        public System.Nullable<System.DateTime> DateReservation
         {
             get
             {
-                return this.DtimeDateReservationField;
+                return this.DateReservationField;
             }
             set
             {
-                this.DtimeDateReservationField = value;
+                this.DateReservationField = value;
             }
         }
         
@@ -264,9 +279,11 @@ namespace BookServiceReference
     public partial class ReservationResponse : object
     {
         
-        private System.DateTime DtimeCreatedAtField;
+        private string BookNameField;
         
-        private System.Nullable<System.DateTime> DtimeDateReservationField;
+        private System.DateTime CreatedAtField;
+        
+        private System.Nullable<System.DateTime> DateReservationField;
         
         private int IdBookField;
         
@@ -274,31 +291,46 @@ namespace BookServiceReference
         
         private int IdUserField;
         
-        private System.Nullable<int> IntStatusField;
+        private System.Nullable<int> StatusField;
+        
+        private string UserNameField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.DateTime DtimeCreatedAt
+        public string BookName
         {
             get
             {
-                return this.DtimeCreatedAtField;
+                return this.BookNameField;
             }
             set
             {
-                this.DtimeCreatedAtField = value;
+                this.BookNameField = value;
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<System.DateTime> DtimeDateReservation
+        public System.DateTime CreatedAt
         {
             get
             {
-                return this.DtimeDateReservationField;
+                return this.CreatedAtField;
             }
             set
             {
-                this.DtimeDateReservationField = value;
+                this.CreatedAtField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<System.DateTime> DateReservation
+        {
+            get
+            {
+                return this.DateReservationField;
+            }
+            set
+            {
+                this.DateReservationField = value;
             }
         }
         
@@ -342,15 +374,28 @@ namespace BookServiceReference
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<int> IntStatus
+        public System.Nullable<int> Status
         {
             get
             {
-                return this.IntStatusField;
+                return this.StatusField;
             }
             set
             {
-                this.IntStatusField = value;
+                this.StatusField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string UserName
+        {
+            get
+            {
+                return this.UserNameField;
+            }
+            set
+            {
+                this.UserNameField = value;
             }
         }
     }

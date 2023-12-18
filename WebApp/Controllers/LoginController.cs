@@ -36,9 +36,9 @@ namespace WebApp.Controllers
 
             var claims = new[]
 			{
-                new Claim(JwtRegisteredClaimNames.Name, user.VarFirstName),
-                new Claim(JwtRegisteredClaimNames.Sub, user.VarLastName),
-				new Claim(JwtRegisteredClaimNames.Email, user.VarEmail),
+                new Claim(JwtRegisteredClaimNames.Name, user.FirstName),
+                new Claim(JwtRegisteredClaimNames.Sub, user.LastName),
+				new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, user.IdUser.ToString())
 			};
 

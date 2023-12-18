@@ -30,7 +30,7 @@ namespace WebApp.Controllers
             {
                 IdBook = idBook,
                 IdUser = idUser,
-                DtimeDateReservation = DateTime.Now,
+                DateReservation = DateTime.Now,
             };
 
             var reservation = await bookService.CreateReservationAsync(body);

@@ -18,63 +18,63 @@ namespace UserServiceReference
     public partial class UserRequestDto : object
     {
         
-        private string VarEmailField;
+        private string EmailField;
         
-        private string VarFirstNameField;
+        private string FirstNameField;
         
-        private string VarLastNameField;
+        private string LastNameField;
         
-        private string VarPasswordField;
+        private string PasswordField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string VarEmail
+        public string Email
         {
             get
             {
-                return this.VarEmailField;
+                return this.EmailField;
             }
             set
             {
-                this.VarEmailField = value;
+                this.EmailField = value;
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string VarFirstName
+        public string FirstName
         {
             get
             {
-                return this.VarFirstNameField;
+                return this.FirstNameField;
             }
             set
             {
-                this.VarFirstNameField = value;
+                this.FirstNameField = value;
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string VarLastName
+        public string LastName
         {
             get
             {
-                return this.VarLastNameField;
+                return this.LastNameField;
             }
             set
             {
-                this.VarLastNameField = value;
+                this.LastNameField = value;
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string VarPassword
+        public string Password
         {
             get
             {
-                return this.VarPasswordField;
+                return this.PasswordField;
             }
             set
             {
-                this.VarPasswordField = value;
+                this.PasswordField = value;
             }
         }
     }
@@ -85,28 +85,54 @@ namespace UserServiceReference
     public partial class UserResponseDto : object
     {
         
-        private System.DateTime DtimeCreatedAtField;
+        private System.DateTime CreatedAtField;
+        
+        private string EmailField;
+        
+        private string FirstNameField;
         
         private int IdUserField;
         
-        private System.Nullable<int> IntStatusField;
+        private string LastNameField;
         
-        private string VarEmailField;
-        
-        private string VarFirstNameField;
-        
-        private string VarLastNameField;
+        private System.Nullable<int> StatusField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.DateTime DtimeCreatedAt
+        public System.DateTime CreatedAt
         {
             get
             {
-                return this.DtimeCreatedAtField;
+                return this.CreatedAtField;
             }
             set
             {
-                this.DtimeCreatedAtField = value;
+                this.CreatedAtField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Email
+        {
+            get
+            {
+                return this.EmailField;
+            }
+            set
+            {
+                this.EmailField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string FirstName
+        {
+            get
+            {
+                return this.FirstNameField;
+            }
+            set
+            {
+                this.FirstNameField = value;
             }
         }
         
@@ -124,54 +150,28 @@ namespace UserServiceReference
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<int> IntStatus
+        public string LastName
         {
             get
             {
-                return this.IntStatusField;
+                return this.LastNameField;
             }
             set
             {
-                this.IntStatusField = value;
+                this.LastNameField = value;
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string VarEmail
+        public System.Nullable<int> Status
         {
             get
             {
-                return this.VarEmailField;
+                return this.StatusField;
             }
             set
             {
-                this.VarEmailField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string VarFirstName
-        {
-            get
-            {
-                return this.VarFirstNameField;
-            }
-            set
-            {
-                this.VarFirstNameField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string VarLastName
-        {
-            get
-            {
-                return this.VarLastNameField;
-            }
-            set
-            {
-                this.VarLastNameField = value;
+                this.StatusField = value;
             }
         }
     }
@@ -182,33 +182,33 @@ namespace UserServiceReference
     public partial class CredentialRequestDto : object
     {
         
-        private string VarEmailField;
+        private string EmailField;
         
-        private string VarPasswordField;
+        private string PasswordField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string VarEmail
+        public string Email
         {
             get
             {
-                return this.VarEmailField;
+                return this.EmailField;
             }
             set
             {
-                this.VarEmailField = value;
+                this.EmailField = value;
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string VarPassword
+        public string Password
         {
             get
             {
-                return this.VarPasswordField;
+                return this.PasswordField;
             }
             set
             {
-                this.VarPasswordField = value;
+                this.PasswordField = value;
             }
         }
     }

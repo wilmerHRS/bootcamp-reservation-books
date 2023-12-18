@@ -1,22 +1,22 @@
 ﻿$(document).ready(function () {
     $('#form-login').validate({
         rules: {
-            VarEmail: {
+            Email: {
                 required: true,
                 minlength: 8
             },
-            VarPassword: {
+            Password: {
                 required: true,
                 minlength: 6
             }
         },
         messages: {
-            VarEmail: {
+            Email: {
                 required: "Por favor, ingresa tu nombre de usuario.",
                 email: "Ingresa un correo electrónico válido.",
                 minlength: "El nombre de usuario debe tener al menos 8 caracteres."
             },
-            VarPassword: {
+            Password: {
                 required: "Por favor, ingresa tu contraseña.",
                 minlength: "La contraseña debe tener al menos 6 caracteres."
             }

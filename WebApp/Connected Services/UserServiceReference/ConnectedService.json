@@ -1,7 +1,7 @@
 {
   "ExtendedData": {
     "inputs": [
-      "http://localhost:53057/Services/User/UserService.svc?wsdl"
+      "http://localhost:53057/Services/User/UserService.svc"
     ],
     "collectionTypes": [
       "System.Array",
@@ -15,6 +15,7 @@
       "Humanizer, {Humanizer.Core, 2.14.1}",
       "MessagePack, {MessagePack, 2.1.152}",
       "MessagePack.Annotations, {MessagePack.Annotations, 2.1.152}",
+      "Microsoft.AspNetCore.Authentication.JwtBearer, {Microsoft.AspNetCore.Authentication.JwtBearer, 6.0.25}",
       "Microsoft.AspNetCore.Razor.Language, {Microsoft.AspNetCore.Razor.Language, 6.0.0}",
       "Microsoft.Bcl.AsyncInterfaces, {Microsoft.Bcl.AsyncInterfaces, 5.0.0}",
       "Microsoft.Build, {Microsoft.Build, 17.3.2}",
@@ -33,9 +34,13 @@
       "Microsoft.Extensions.DependencyInjection, {Microsoft.Extensions.DependencyInjection, 6.0.0}",
       "Microsoft.Extensions.DependencyInjection.Abstractions, {Microsoft.Extensions.DependencyInjection.Abstractions, 6.0.0}",
       "Microsoft.Extensions.ObjectPool, {Microsoft.Extensions.ObjectPool, 5.0.10}",
-      "Microsoft.IdentityModel.Logging, {Microsoft.IdentityModel.Logging, 6.8.0}",
+      "Microsoft.IdentityModel.Abstractions, {Microsoft.IdentityModel.Abstractions, 6.33.0}",
+      "Microsoft.IdentityModel.JsonWebTokens, {Microsoft.IdentityModel.JsonWebTokens, 6.33.0}",
+      "Microsoft.IdentityModel.Logging, {Microsoft.IdentityModel.Logging, 6.33.0}",
+      "Microsoft.IdentityModel.Protocols, {Microsoft.IdentityModel.Protocols, 6.10.0}",
+      "Microsoft.IdentityModel.Protocols.OpenIdConnect, {Microsoft.IdentityModel.Protocols.OpenIdConnect, 6.10.0}",
       "Microsoft.IdentityModel.Protocols.WsTrust, {Microsoft.IdentityModel.Protocols.WsTrust, 6.8.0}",
-      "Microsoft.IdentityModel.Tokens, {Microsoft.IdentityModel.Tokens, 6.8.0}",
+      "Microsoft.IdentityModel.Tokens, {Microsoft.IdentityModel.Tokens, 6.33.0}",
       "Microsoft.IdentityModel.Tokens.Saml, {Microsoft.IdentityModel.Tokens.Saml, 6.8.0}",
       "Microsoft.IdentityModel.Xml, {Microsoft.IdentityModel.Xml, 6.8.0}",
       "Microsoft.NET.StringTools, {Microsoft.NET.StringTools, 17.3.2}",
@@ -76,6 +81,7 @@
       "System.Formats.Asn1, {System.Formats.Asn1, 6.0.0}",
       "System.Globalization, {System.Globalization, 4.3.0}",
       "System.Globalization.Calendars, {System.Globalization.Calendars, 4.3.0}",
+      "System.IdentityModel.Tokens.Jwt, {System.IdentityModel.Tokens.Jwt, 6.33.0}",
       "System.IO, {System.IO, 4.3.0}",
       "System.IO.Compression, {System.IO.Compression, 4.3.0}",
       "System.IO.Compression.ZipFile, {System.IO.Compression.ZipFile, 4.3.0}",

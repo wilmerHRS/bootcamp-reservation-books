@@ -1,11 +1,11 @@
 ﻿$(document).ready(function () {
-    const user = localStorage.getItem('user_data');
+    const data = localStorage.getItem('user_data');
 
-    if (!user) return window.location.href = '/Login';
+    if (!data) return window.location.href = '/Login';
 
-    let userData = JSON.parse(user);
+    let { user } = JSON.parse(data);
 
-    $("#span-user").text(`${userData.user.varFirstName} ${userData.user.varLastName}`);
+    $("#span-user").text(`${user.firstName} ${user.lastName}`);
 
     $('#btn-logout-x').click(function () {
         localStorage.removeItem('user_data');

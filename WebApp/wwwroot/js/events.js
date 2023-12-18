@@ -1,7 +1,7 @@
 ﻿$(document).ready(function () {
     const user = localStorage.getItem('user_data');
 
-    if (!user) return window.location.href = '/Login)';
+    if (!user) return window.location.href = '/Login';
 
     let userData = JSON.parse(user);
 
