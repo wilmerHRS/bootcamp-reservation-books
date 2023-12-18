@@ -11,8 +11,10 @@ namespace WcfService.Dto.Reservation
         public int IdResevation { get; set; }
         public int IdUser { get; set; }
         public int IdBook { get; set; }
-        public DateTime? DtimeDateReservation { get; set; }
-        public int? IntStatus { get; set; }
-        public DateTime DtimeCreatedAt { get; set; }
+        public string UserName { get; set; }
+        public string BookName { get; set; }
+        public DateTime? DateReservation { get; set; }
+        public int? Status { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

@@ -7,9 +7,9 @@ namespace WcfService.Dto.User
 {
     public class UserRequestDto
     {
-        public string VarFirstName { get; set; }
-        public string VarLastName { get; set; }
-        public string VarEmail { get; set; }
-        public string VarPassword { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
 }

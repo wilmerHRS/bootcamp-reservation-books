@@ -199,7 +199,7 @@
     <Compile Include="Dto\User\CredentialRequestDto.cs" />
     <Compile Include="Dto\User\UserRequestDto.cs" />
     <Compile Include="Dto\User\UserResponseDto.cs" />
-    <Compile Include="Entities\BooksReservationContext.cs" />
+    <Compile Include="Entities\BooksReservationNewContext.cs" />
     <Compile Include="Entities\Tbooks.cs" />
     <Compile Include="Entities\Treservations.cs" />
     <Compile Include="Entities\Tusers.cs" />

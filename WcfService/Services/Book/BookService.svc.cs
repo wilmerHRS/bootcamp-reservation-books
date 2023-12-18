@@ -10,6 +10,7 @@ using System.Net.NetworkInformation;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Text;
+using System.Web.Configuration;
 using WcfService.Dto.Book;
 using WcfService.Dto.Reservation;
 using WcfService.Entities;
@@ -20,22 +21,23 @@ namespace WcfService.Services.Book
     // NOTA: para iniciar el Cliente de prueba WCF para probar este servicio, seleccione BookService.svc o BookService.svc.cs en el Explorador de soluciones e inicie la depuración.
     public class BookService : IBookService
     {
-        private readonly BooksReservationContext DBContext = new BooksReservationContext();
-        private readonly SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["ConStr"].ConnectionString);
+        private readonly BooksReservationNewContext _dbContext = new BooksReservationNewContext();
+        private readonly SqlConnection _connection = new SqlConnection(ConfigurationManager.ConnectionStrings["ConStr"].ConnectionString);
 
         // Ejemplo
         public List<BookResponseDtoEF> GetAllEF()
         {
-            var books = DBContext.Tbooks
+            var books = _dbContext.Tbooks
                 .Where(b => b.BitIsDeleted == false)
                 .OrderByDescending(b => b.DtimeUpdatedAt)
                 .Select(b => new BookResponseDtoEF
                 {
                     IdBook = b.IdBook,
-                    VarTitle = b.VarTitle,
-                    VarCode = b.VarCode,
-                    IntStatus = b.IntStatus,
-                    DtimeCreatedAt = b.DtimeCreatedAt
+                    Title = b.VarTitle,
+                    Code = b.VarCode,
+                    Status = b.IntStatus,
+                    IsAvailable = b.BitIsAvailable,
+                    CreatedAt = b.DtimeCreatedAt
                 }).ToList();
 
             return books; // quitar
@@ -48,47 +50,38 @@ namespace WcfService.Services.Book
 
             try
             {
-                SqlCommand cmd = new SqlCommand("SP_GetAll_Books", connection);
+                SqlCommand cmd = new SqlCommand("SP_GetAll_Books", _connection);
                 cmd.CommandType = CommandType.StoredProcedure;
 
-                if (connection.State == ConnectionState.Closed) connection.Open();
+                if (_connection.State == ConnectionState.Closed) _connection.Open();
 
                 SqlDataAdapter adapter = new SqlDataAdapter();
                 adapter.SelectCommand = cmd;
                 DataSet ds = new DataSet();
                 adapter.Fill(ds);
                 cmd.ExecuteNonQuery();
-                connection.Close();
+                _connection.Close();
 
                 books = new List<BookResponseDto>();
-                DateTime? parseDateReservation;
 
                 foreach (DataRow dr in ds.Tables[0].Rows)
                 {
-                    if(dr["DtimeDateReservation"].ToString() != "")
-                    {
-                        parseDateReservation = Convert.ToDateTime(dr["DtimeDateReservation"]);
-                    }
-                    else
-                    {
-                        parseDateReservation = null;
-                    }
 
                     BookResponseDto book = new BookResponseDto
                     {
-                        IdBook = Convert.ToInt32(dr["IdBook"]),
-                        VarTitle = dr["VarTitle"].ToString(),
-                        VarCode = dr["VarCode"].ToString(),
-                        IntStatus = Convert.ToInt32(dr["IntStatus"]),
-                        IsReserved = Convert.ToBoolean(dr["IsReserved"]),
-                        DtimeDateReservation = parseDateReservation,
-                        DtimeCreatedAt = Convert.ToDateTime(dr["DtimeCreatedAt"])
+                        IdBook = Convert.ToInt32(dr["idBook"]),
+                        Title = dr["varTitle"].ToString(),
+                        Code = dr["varCode"].ToString(),
+                        Status = Convert.ToInt32(dr["intStatus"]),
+                        IsAvailable = Convert.ToBoolean(dr["bitIsAvailable"]),
+                        DateReservation = this.ConvertDate(dr["dtimeDateReservation"].ToString()),
+                        CreatedAt = Convert.ToDateTime(dr["dtimeCreatedAt"])
                     };
 
                     books.Add(book);
                 }
             }
-            catch (Exception ex) 
+            catch (Exception) 
             {
                 return books;
             }
@@ -103,48 +96,38 @@ namespace WcfService.Services.Book
 
             try
             {
-                SqlCommand cmd = new SqlCommand("SP_GetSearch_Books", connection);
+                SqlCommand cmd = new SqlCommand("SP_GetSearch_Books", _connection);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@VarSearch", search ?? "");
 
-                if (connection.State == ConnectionState.Closed) connection.Open();
+                if (_connection.State == ConnectionState.Closed) _connection.Open();
 
                 SqlDataAdapter adapter = new SqlDataAdapter();
                 adapter.SelectCommand = cmd;
                 DataSet ds = new DataSet();
                 adapter.Fill(ds);
                 cmd.ExecuteNonQuery();
-                connection.Close();
+                _connection.Close();
 
                 books = new List<BookResponseDto>();
-                DateTime? parseDateReservation;
 
                 foreach (DataRow dr in ds.Tables[0].Rows)
                 {
-                    if (dr["DtimeDateReservation"].ToString() != "")
-                    {
-                        parseDateReservation = Convert.ToDateTime(dr["DtimeDateReservation"]);
-                    }
-                    else
-                    {
-                        parseDateReservation = null;
-                    }
-
                     BookResponseDto book = new BookResponseDto
                     {
-                        IdBook = Convert.ToInt32(dr["IdBook"]),
-                        VarTitle = dr["VarTitle"].ToString(),
-                        VarCode = dr["VarCode"].ToString(),
-                        IntStatus = Convert.ToInt32(dr["IntStatus"]),
-                        IsReserved = Convert.ToBoolean(dr["IsReserved"]),
-                        DtimeDateReservation = parseDateReservation,
-                        DtimeCreatedAt = Convert.ToDateTime(dr["DtimeCreatedAt"])
+                        IdBook = Convert.ToInt32(dr["idBook"]),
+                        Title = dr["varTitle"].ToString(),
+                        Code = dr["varCode"].ToString(),
+                        Status = Convert.ToInt32(dr["intStatus"]),
+                        IsAvailable = Convert.ToBoolean(dr["bitIsAvailable"]),
+                        DateReservation = this.ConvertDate(dr["dtimeDateReservation"].ToString()),
+                        CreatedAt = Convert.ToDateTime(dr["dtimeCreatedAt"])
                     };
 
                     books.Add(book);
                 }
             }
-            catch (Exception ex) {
+            catch (Exception) {
                 return books;
             }
 
@@ -158,45 +141,35 @@ namespace WcfService.Services.Book
 
             try
             {
-                SqlCommand cmd = new SqlCommand("SP_GetById_Books", connection);
+                SqlCommand cmd = new SqlCommand("SP_GetById_Books", _connection);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@IntIdBook", idBook);
 
-                if (connection.State == ConnectionState.Closed) connection.Open();
+                if (_connection.State == ConnectionState.Closed) _connection.Open();
 
                 SqlDataAdapter adapter = new SqlDataAdapter();
                 adapter.SelectCommand = cmd;
                 DataSet ds = new DataSet();
                 adapter.Fill(ds);
                 cmd.ExecuteNonQuery();
-                connection.Close();
-
-                DateTime? parseDateReservation;
+                _connection.Close();
 
                 foreach (DataRow dr in ds.Tables[0].Rows)
                 {
-                    if (dr["DtimeDateReservation"].ToString() != "")
-                    {
-                        parseDateReservation = Convert.ToDateTime(dr["DtimeDateReservation"]);
-                    }
-                    else
-                    {
-                        parseDateReservation = null;
-                    }
 
                     book = new BookResponseDto
                     {
-                        IdBook = Convert.ToInt32(dr["IdBook"]),
-                        VarTitle = dr["VarTitle"].ToString(),
-                        VarCode = dr["VarCode"].ToString(),
-                        IntStatus = Convert.ToInt32(dr["IntStatus"]),
-                        IsReserved = Convert.ToBoolean(dr["IsReserved"]),
-                        DtimeDateReservation = parseDateReservation,
-                        DtimeCreatedAt = Convert.ToDateTime(dr["DtimeCreatedAt"])
+                        IdBook = Convert.ToInt32(dr["idBook"]),
+                        Title = dr["varTitle"].ToString(),
+                        Code = dr["varCode"].ToString(),
+                        Status = Convert.ToInt32(dr["intStatus"]),
+                        IsAvailable = Convert.ToBoolean(dr["bitIsAvailable"]),
+                        DateReservation = this.ConvertDate(dr["dtimeDateReservation"].ToString()),
+                        CreatedAt = Convert.ToDateTime(dr["dtimeCreatedAt"])
                     };
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return book;
             }
@@ -209,39 +182,71 @@ namespace WcfService.Services.Book
         {
             ReservationResponse res = null;
 
-            var book = this.GetById(reservation.IdBook);
-
-            // para no crear una reserva a un libro q ya esta reservado
-            if(book == null || book.IsReserved) return res;
-
             try
             {
+                var book = this.GetById(reservation.IdBook);
+                if(book == null || (bool)!book.IsAvailable) return res; // no reservar un libro reservado
+
+                var user = this.GetUserById(reservation.IdUser);
+                if(user == null) return res; // no reservar con usuario bloqueado o no existente
+
+                // (RESERVAR)
                 var data = new Treservations
                 {
                     IdBook = reservation.IdBook,
                     IdUser = reservation.IdUser,
-                    DtimeDateReservation = reservation.DtimeDateReservation,
+                    VarBookName = book.Title,
+                    VarUserName = $"{user.VarFirstName} {user.VarLastName}",
+                    DtimeDateReservation = reservation.DateReservation,
                 };
 
-                DBContext.Treservations.Add(data);
-                DBContext.SaveChanges();
+                _dbContext.Treservations.Add(data);
+                _dbContext.SaveChanges();
 
+                // Actualizar libro a (NO DISPONIBLE)
+                var updateBook = _dbContext.Tbooks.FirstOrDefault(x => x.IdBook == book.IdBook);
+
+                updateBook.BitIsAvailable = false;
+                _dbContext.SaveChangesAsync();
+
+                // Crear respuesta
                 res = new ReservationResponse
                 {
                     IdResevation = data.IdResevation,
                     IdBook = data.IdBook,
                     IdUser = data.IdUser,
-                    IntStatus = data.IntStatus,
-                    DtimeDateReservation = data.DtimeDateReservation,
-                    DtimeCreatedAt = data.DtimeCreatedAt
+                    BookName = data.VarBookName,
+                    UserName = data.VarUserName,
+                    Status = data.IntStatus,
+                    DateReservation = data.DtimeDateReservation,
+                    CreatedAt = data.DtimeCreatedAt
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return res;
             }
 
             return res;
+        }
+
+        private Tusers GetUserById(int idUser)
+        {
+            var data = _dbContext.Tusers
+                .Where(u => u.IdUser == idUser && u.BitIsDeleted == false && u.IntStatus == 1)
+                .FirstOrDefault();
+
+            return data;
+        }
+        
+        // convertir a tipo fecha
+        private DateTime? ConvertDate(string dateStr)
+        {
+            var parseDateReservation = (dateStr != string.Empty) 
+                ? Convert.ToDateTime(dateStr) 
+                : (DateTime?)null;
+
+            return parseDateReservation;
         }
     }
 }

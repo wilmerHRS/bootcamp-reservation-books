@@ -12,6 +12,8 @@ namespace WcfService.Entities
         public int IdResevation { get; set; }
         public int IdUser { get; set; }
         public int IdBook { get; set; }
+        public string VarUserName { get; set; }
+        public string VarBookName { get; set; }
         public DateTime? DtimeDateReservation { get; set; }
         public int? IntStatus { get; set; }
         public DateTime DtimeCreatedAt { get; set; }

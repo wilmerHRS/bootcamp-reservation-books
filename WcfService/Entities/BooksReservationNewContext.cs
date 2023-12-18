@@ -9,13 +9,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace WcfService.Entities
 {
-    public partial class BooksReservationContext : DbContext
+    public partial class BooksReservationNewContext : DbContext
     {
-        public BooksReservationContext()
+        public BooksReservationNewContext()
         {
         }
 
-        public BooksReservationContext(DbContextOptions<BooksReservationContext> options)
+        public BooksReservationNewContext(DbContextOptions<BooksReservationNewContext> options)
             : base(options)
         {
         }
@@ -37,29 +37,43 @@ namespace WcfService.Entities
             modelBuilder.Entity<Tbooks>(entity =>
             {
                 entity.HasKey(e => e.IdBook)
-                    .HasName("PK__TBooks__2756CBDB26A3259B");
+                    .HasName("PK__TBooks__D80547A1BC1E9587");
 
                 entity.ToTable("TBooks");
 
-                entity.Property(e => e.BitIsDeleted).HasDefaultValueSql("((0))");
+                entity.Property(e => e.IdBook).HasColumnName("idBook");
+
+                entity.Property(e => e.BitIsAvailable)
+                    .HasColumnName("bitIsAvailable")
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.BitIsDeleted)
+                    .HasColumnName("bitIsDeleted")
+                    .HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.DtimeCreatedAt)
+                    .HasColumnName("dtimeCreatedAt")
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(sysdatetime())");
 
                 entity.Property(e => e.DtimeUpdatedAt)
+                    .HasColumnName("dtimeUpdatedAt")
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(sysdatetime())");
 
-                entity.Property(e => e.IntStatus).HasDefaultValueSql("((1))");
+                entity.Property(e => e.IntStatus)
+                    .HasColumnName("intStatus")
+                    .HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.VarCode)
                     .IsRequired()
+                    .HasColumnName("varCode")
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
                 entity.Property(e => e.VarTitle)
                     .IsRequired()
+                    .HasColumnName("varTitle")
                     .HasMaxLength(150)
                     .IsUnicode(false);
             });
@@ -67,25 +81,50 @@ namespace WcfService.Entities
             modelBuilder.Entity<Treservations>(entity =>
             {
                 entity.HasKey(e => e.IdResevation)
-                    .HasName("PK__TReserva__F88D1AE966B8851C");
+                    .HasName("PK__TReserva__9B182A360B01171E");
 
                 entity.ToTable("TReservations");
 
-                entity.Property(e => e.BitIsDeleted).HasDefaultValueSql("((0))");
+                entity.Property(e => e.IdResevation).HasColumnName("idResevation");
+
+                entity.Property(e => e.BitIsDeleted)
+                    .HasColumnName("bitIsDeleted")
+                    .HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.DtimeCreatedAt)
+                    .HasColumnName("dtimeCreatedAt")
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(sysdatetime())");
 
                 entity.Property(e => e.DtimeDateReservation)
+                    .HasColumnName("dtimeDateReservation")
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(sysdatetime())");
 
                 entity.Property(e => e.DtimeUpdatedAt)
+                    .HasColumnName("dtimeUpdatedAt")
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(sysdatetime())");
 
-                entity.Property(e => e.IntStatus).HasDefaultValueSql("((1))");
+                entity.Property(e => e.IdBook).HasColumnName("idBook");
+
+                entity.Property(e => e.IdUser).HasColumnName("idUser");
+
+                entity.Property(e => e.IntStatus)
+                    .HasColumnName("intStatus")
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.VarBookName)
+                    .IsRequired()
+                    .HasColumnName("varBookName")
+                    .HasMaxLength(150)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VarUserName)
+                    .IsRequired()
+                    .HasColumnName("varUserName")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
 
                 entity.HasOne(d => d.IdBookNavigation)
                     .WithMany(p => p.Treservations)
@@ -101,39 +140,51 @@ namespace WcfService.Entities
             modelBuilder.Entity<Tusers>(entity =>
             {
                 entity.HasKey(e => e.IdUser)
-                    .HasName("PK__TUsers__B7C926383BB0E3D1");
+                    .HasName("PK__TUsers__3717C98237962AD3");
 
                 entity.ToTable("TUsers");
 
-                entity.Property(e => e.BitIsDeleted).HasDefaultValueSql("((0))");
+                entity.Property(e => e.IdUser).HasColumnName("idUser");
+
+                entity.Property(e => e.BitIsDeleted)
+                    .HasColumnName("bitIsDeleted")
+                    .HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.DtimeCreatedAt)
+                    .HasColumnName("dtimeCreatedAt")
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(sysdatetime())");
 
                 entity.Property(e => e.DtimeUpdatedAt)
+                    .HasColumnName("dtimeUpdatedAt")
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(sysdatetime())");
 
-                entity.Property(e => e.IntStatus).HasDefaultValueSql("((1))");
+                entity.Property(e => e.IntStatus)
+                    .HasColumnName("intStatus")
+                    .HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.VarEmail)
                     .IsRequired()
+                    .HasColumnName("varEmail")
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
                 entity.Property(e => e.VarFirstName)
                     .IsRequired()
+                    .HasColumnName("varFirstName")
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
                 entity.Property(e => e.VarLastName)
                     .IsRequired()
+                    .HasColumnName("varLastName")
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
                 entity.Property(e => e.VarPassword)
                     .IsRequired()
+                    .HasColumnName("varPassword")
                     .HasMaxLength(200)
                     .IsUnicode(false);
             });

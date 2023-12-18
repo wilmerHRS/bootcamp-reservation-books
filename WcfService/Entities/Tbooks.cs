@@ -18,6 +18,7 @@ namespace WcfService.Entities
         public string VarTitle { get; set; }
         public string VarCode { get; set; }
         public int? IntStatus { get; set; }
+        public bool? BitIsAvailable { get; set; }
         public DateTime DtimeCreatedAt { get; set; }
         public DateTime DtimeUpdatedAt { get; set; }
         public bool? BitIsDeleted { get; set; }

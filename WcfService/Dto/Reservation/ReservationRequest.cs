@@ -10,6 +10,6 @@ namespace WcfService.Dto.Reservation
     {
         public int IdUser { get; set; }
         public int IdBook { get; set; }
-        public DateTime? DtimeDateReservation { get; set; }
+        public DateTime? DateReservation { get; set; }
     }
 }

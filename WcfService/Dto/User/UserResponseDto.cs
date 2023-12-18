@@ -8,10 +8,10 @@ namespace WcfService.Dto.User
     public class UserResponseDto
     {
         public int IdUser { get; set; }
-        public string VarFirstName { get; set; }
-        public string VarLastName { get; set; }
-        public string VarEmail { get; set; }
-        public int? IntStatus { get; set; }
-        public DateTime DtimeCreatedAt { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public int? Status { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }
