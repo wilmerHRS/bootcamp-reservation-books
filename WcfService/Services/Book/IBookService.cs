@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Text;
+using WcfService.Dto.Base;
 using WcfService.Dto.Book;
 using WcfService.Dto.Reservation;
 
@@ -17,15 +18,15 @@ namespace WcfService.Services.Book
         List<BookResponseDtoEF> GetAllEF();
 
         [OperationContract]
-        List<BookResponseDto> GetAll();
+        List<BookResponseDto> GetAll(int idUser = 0);
 
         [OperationContract]
-        List<BookResponseDto> GetSearch(string search);
+        List<BookResponseDto> GetSearch(string search, int idUser = 0);
 
         [OperationContract]
-        BookResponseDto GetById(int idBook);
+        BookResponseDto GetById(int idBook, int idUser = 0);
 
         [OperationContract]
-        ReservationResponse CreateReservation(ReservationRequest reservation);
+        ResponseDto<ReservationResponse> CreateReservation(ReservationRequest reservation);
     }
 }

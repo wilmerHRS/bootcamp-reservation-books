@@ -3,7 +3,7 @@
 
     if (!data) return window.location.href = '/Login';
 
-    let { user } = JSON.parse(data);
+    let { user, accessToken } = JSON.parse(data);
 
     $("#span-user").text(`${user.firstName} ${user.lastName}`);
 
@@ -11,4 +11,13 @@
         localStorage.removeItem('user_data');
         return window.location.href = '/Login';
     });
+
+    // generar enlace con token
+    function angularLink() {
+        const href = `http://localhost:4200/?access_token=${accessToken}`;
+
+        $('#link-angular').attr('href', href);
+    }
+
+    angularLink();
 })

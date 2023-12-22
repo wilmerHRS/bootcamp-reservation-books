@@ -11,12 +11,16 @@
       "*, BookServiceReference"
     ],
     "references": [
+      "BootstrapIcons.AspNetCore, {BootstrapIcons.AspNetCore, 1.9.2}",
       "dotnet-aspnet-codegenerator-design, {Microsoft.VisualStudio.Web.CodeGeneration.Design, 6.0.16}",
       "Humanizer, {Humanizer.Core, 2.14.1}",
       "MessagePack, {MessagePack, 2.1.152}",
       "MessagePack.Annotations, {MessagePack.Annotations, 2.1.152}",
       "Microsoft.AspNetCore.Authentication.JwtBearer, {Microsoft.AspNetCore.Authentication.JwtBearer, 6.0.25}",
+      "Microsoft.AspNetCore.Html.Abstractions, {Microsoft.AspNetCore.Html.Abstractions, 2.2.0}",
+      "Microsoft.AspNetCore.Razor, {Microsoft.AspNetCore.Razor, 2.2.0}",
       "Microsoft.AspNetCore.Razor.Language, {Microsoft.AspNetCore.Razor.Language, 6.0.0}",
+      "Microsoft.AspNetCore.Razor.Runtime, {Microsoft.AspNetCore.Razor.Runtime, 2.2.0}",
       "Microsoft.Bcl.AsyncInterfaces, {Microsoft.Bcl.AsyncInterfaces, 5.0.0}",
       "Microsoft.Build, {Microsoft.Build, 17.3.2}",
       "Microsoft.Build.Framework, {Microsoft.Build.Framework, 17.3.2}",

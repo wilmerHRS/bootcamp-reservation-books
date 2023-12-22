@@ -35,8 +35,10 @@ CREATE TABLE TReservations(
 	idBook INT NOT NULL,
 	varUserName VARCHAR(100) NOT NULL, -- nombre del usuario sin hacer join
 	varBookName VARCHAR(150) NOT NULL, -- nombre del libro sin hacer join
-	dtimeDateReservation DATETIME DEFAULT SYSDATETIME(),
-	intStatus INT DEFAULT 1,
+	dtimeDateReservation DATETIME NOT NULL,
+	dtimeDateReservationEnd DATETIME NOT NULL,
+	intStatus INT DEFAULT 1, -- se puede tomar para una tabla de estados (activo, pendiente, cancelado)
+	bitIsActive BIT DEFAULT 1, -- saber si esta activo
 	dtimeCreatedAt DATETIME NOT NULL DEFAULT SYSDATETIME(),
 	dtimeUpdatedAt DATETIME NOT NULL DEFAULT SYSDATETIME(),
 	bitIsDeleted BIT DEFAULT 0
@@ -49,13 +51,31 @@ ALTER TABLE TReservations
 	REFERENCES TUsers(idUser)
 	ON DELETE CASCADE
 	ON UPDATE CASCADE
+GO
 
 ALTER TABLE TReservations
 	ADD CONSTRAINT FK_TReservations_TBooks FOREIGN KEY (idBook)
 	REFERENCES TBooks(idBook)
 	ON DELETE CASCADE
 	ON UPDATE CASCADE
+GO
 -- (FIN) Add FK in Reservation Table
+
+CREATE TABLE TWaitReservations(
+	idWaitReservation INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+	idUser INT NOT NULL,
+	idBook INT NOT NULL,
+	varUserName VARCHAR(100) NOT NULL, -- nombre del usuario sin hacer join
+	varBookName VARCHAR(150) NOT NULL, -- nombre del libro sin hacer join
+	varPriority CHAR(2) NOT NULL,
+	dtimeDateReservation DATETIME NOT NULL,
+	dtimeDateReservationEnd DATETIME NOT NULL,
+	intStatus INT DEFAULT 1, -- se puede tomar para una tabla de estados (activo, pendiente, cancelado)
+	bitIsActive BIT DEFAULT 1, -- saber si esta activo
+	dtimeCreatedAt DATETIME NOT NULL DEFAULT SYSDATETIME(),
+	dtimeUpdatedAt DATETIME NOT NULL DEFAULT SYSDATETIME(),
+	bitIsDeleted BIT DEFAULT 0
+)
 GO
 
 CREATE TRIGGER TRG_Update_TUsers 
@@ -92,6 +112,17 @@ BEGIN
 END
 GO
 
+CREATE TRIGGER TRG_Update_TWaitReservations
+ON TWaitReservations
+FOR UPDATE
+AS
+BEGIN
+	UPDATE TWaitReservations
+	SET dtimeUpdatedAt = SYSDATETIME()
+	FROM TWaitReservations inner join inserted ON TWaitReservations.idWaitReservation = inserted.idWaitReservation
+END
+GO
+
 INSERT INTO TBooks(VarTitle, VarCode, IntStatus) 
 VALUES
 ('Libro de prueba 1', 'LIBPRUE-1', 1),
@@ -102,24 +133,8 @@ GO
 
 -- (INICIO) CREAR STORED PROCEDURE
 -- -- OBTENER LOS LIBROS	
-CREATE PROCEDURE SP_GetAll_Books
-AS
-	SELECT 
-	TBooks.idBook, 
-	varTitle, 
-	varCode, 
-	TBooks.intStatus, 
-	bitIsAvailable,
-	dtimeDateReservation,
-	TBooks.dtimeCreatedAt
-	FROM TBooks 
-	left join TReservations on TBooks.idBook = TReservations.idBook
-	WHERE TBooks.BitIsDeleted = 0
-GO
-
--- BUSCAR LIBROS
-CREATE PROCEDURE SP_GetSearch_Books (
-	@VarSearch VARCHAR(100)
+ALTER PROCEDURE SP_GetAll_Books (
+	@IdUser INT = 0
 )
 AS
 	SELECT 
@@ -128,18 +143,62 @@ AS
 	varCode, 
 	TBooks.intStatus, 
 	bitIsAvailable,
-	dtimeDateReservation,
+	TReservations.dtimeDateReservation,
+	CASE WHEN TReservations.idUser = @IdUser THEN 1 ELSE 0 END AS bitReservedByMe,
+	CASE WHEN TWaitReservations.idUser = @IdUser THEN 1 ELSE 0 END AS bitWaitReservedByMe,
 	TBooks.dtimeCreatedAt
 	FROM TBooks 
-	left join TReservations on TBooks.idBook = TReservations.idBook
+	left join (
+		SELECT * FROM TReservations
+		WHERE TReservations.bitIsActive = 1
+		AND TReservations.BitIsDeleted = 0
+	) TReservations on TBooks.idBook = TReservations.idBook
+	left join (
+		SELECT idUser, idBook, dtimeDateReservationEnd FROM TWaitReservations
+		WHERE TWaitReservations.bitIsActive = 1
+		AND TWaitReservations.BitIsDeleted = 0
+		AND TWaitReservations.idUser = @IdUser
+	) TWaitReservations on TWaitReservations.idBook = TReservations.idBook
+	WHERE TBooks.BitIsDeleted = 0
+GO
+
+-- BUSCAR LIBROS
+ALTER PROCEDURE SP_GetSearch_Books (
+	@VarSearch VARCHAR(100),
+	@IdUser INT = 0
+)
+AS
+	SELECT 
+	TBooks.idBook, 
+	varTitle, 
+	varCode, 
+	TBooks.intStatus, 
+	bitIsAvailable,
+	TReservations.dtimeDateReservation,
+	CASE WHEN TReservations.idUser = @IdUser THEN 1 ELSE 0 END AS bitReservedByMe,
+	CASE WHEN TWaitReservations.idUser = @IdUser THEN 1 ELSE 0 END AS bitWaitReservedByMe,
+	TBooks.dtimeCreatedAt
+	FROM TBooks 
+	left join (
+		SELECT * FROM TReservations
+		WHERE TReservations.bitIsActive = 1
+		AND TReservations.BitIsDeleted = 0
+	) TReservations on TBooks.idBook = TReservations.idBook
+	left join (
+		SELECT idUser, idBook, dtimeDateReservationEnd FROM TWaitReservations
+		WHERE TWaitReservations.bitIsActive = 1
+		AND TWaitReservations.BitIsDeleted = 0
+		AND TWaitReservations.idUser = @IdUser
+	) TWaitReservations on TWaitReservations.idBook = TReservations.idBook
 	WHERE TBooks.bitIsDeleted = 0
 	AND (varTitle LIKE '%' + @VarSearch + '%'
 	OR varCode LIKE '%' + @VarSearch + '%')
 GO
 
 -- -- OBTENER LIBRO POR ID	
-CREATE PROCEDURE SP_GetById_Books (
-	@IntIdBook INT
+ALTER PROCEDURE SP_GetById_Books (
+	@IntIdBook INT,
+	@IdUser INT = 0
 )
 AS
 	SELECT 
@@ -148,23 +207,35 @@ AS
 	varCode, 
 	TBooks.intStatus, 
 	bitIsAvailable,
-	dtimeDateReservation,
+	TReservations.dtimeDateReservation,
+	TReservations.dtimeDateReservation,
+	CASE WHEN TReservations.idUser = @IdUser THEN 1 ELSE 0 END AS bitReservedByMe,
+	CASE WHEN TWaitReservations.idUser = @IdUser THEN 1 ELSE 0 END AS bitWaitReservedByMe,
 	TBooks.dtimeCreatedAt
 	FROM TBooks 
-	left join TReservations on TBooks.idBook = TReservations.idBook
+	left join (
+		SELECT * FROM TReservations
+		WHERE TReservations.bitIsActive = 1
+		AND TReservations.BitIsDeleted = 0
+	) TReservations on TBooks.idBook = TReservations.idBook
+	left join (
+		SELECT idUser, idBook, dtimeDateReservationEnd FROM TWaitReservations
+		WHERE TWaitReservations.bitIsActive = 1
+		AND TWaitReservations.BitIsDeleted = 0
+		AND TWaitReservations.idUser = @IdUser
+	) TWaitReservations on TWaitReservations.idBook = TReservations.idBook
 	WHERE TBooks.IdBook = @IntIdBook
 	AND TBooks.BitIsDeleted = 0
 GO
-
 -- (FIN) CREAR STORED PROCEDURE
 
-EXECUTE SP_GetAll_Books
+EXECUTE SP_GetAll_Books @IdUser = 1
 GO
 
-EXECUTE SP_GetSearch_Books @VarSearch = 'prueba 2'
+EXECUTE SP_GetSearch_Books @VarSearch = 'prueba', @IdUser = 2
 GO
 
-EXECUTE SP_GetById_Books @IntIdBook = 4
+EXECUTE SP_GetById_Books @IntIdBook = 2, @IdUser = 1
 GO
 
 SELECT * FROM TBooks

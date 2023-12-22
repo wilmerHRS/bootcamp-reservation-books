@@ -23,6 +23,7 @@ namespace WcfService.Entities
         public virtual DbSet<Tbooks> Tbooks { get; set; }
         public virtual DbSet<Treservations> Treservations { get; set; }
         public virtual DbSet<Tusers> Tusers { get; set; }
+        public virtual DbSet<TwaitReservations> TwaitReservations { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -81,11 +82,15 @@ namespace WcfService.Entities
             modelBuilder.Entity<Treservations>(entity =>
             {
                 entity.HasKey(e => e.IdResevation)
-                    .HasName("PK__TReserva__9B182A360B01171E");
+                    .HasName("PK__TReserva__9B182A3657822E61");
 
                 entity.ToTable("TReservations");
 
                 entity.Property(e => e.IdResevation).HasColumnName("idResevation");
+
+                entity.Property(e => e.BitIsActive)
+                    .HasColumnName("bitIsActive")
+                    .HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.BitIsDeleted)
                     .HasColumnName("bitIsDeleted")
@@ -98,8 +103,11 @@ namespace WcfService.Entities
 
                 entity.Property(e => e.DtimeDateReservation)
                     .HasColumnName("dtimeDateReservation")
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(sysdatetime())");
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.DtimeDateReservationEnd)
+                    .HasColumnName("dtimeDateReservationEnd")
+                    .HasColumnType("datetime");
 
                 entity.Property(e => e.DtimeUpdatedAt)
                     .HasColumnName("dtimeUpdatedAt")
@@ -186,6 +194,69 @@ namespace WcfService.Entities
                     .IsRequired()
                     .HasColumnName("varPassword")
                     .HasMaxLength(200)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TwaitReservations>(entity =>
+            {
+                entity.HasKey(e => e.IdWaitReservation)
+                    .HasName("PK__TWaitRes__A0EA3512CDD79E28");
+
+                entity.ToTable("TWaitReservations");
+
+                entity.Property(e => e.IdWaitReservation).HasColumnName("idWaitReservation");
+
+                entity.Property(e => e.BitIsActive)
+                    .HasColumnName("bitIsActive")
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.BitIsDeleted)
+                    .HasColumnName("bitIsDeleted")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.DtimeCreatedAt)
+                    .HasColumnName("dtimeCreatedAt")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(sysdatetime())");
+
+                entity.Property(e => e.DtimeDateReservation)
+                    .HasColumnName("dtimeDateReservation")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.DtimeDateReservationEnd)
+                    .HasColumnName("dtimeDateReservationEnd")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.DtimeUpdatedAt)
+                    .HasColumnName("dtimeUpdatedAt")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(sysdatetime())");
+
+                entity.Property(e => e.IdBook).HasColumnName("idBook");
+
+                entity.Property(e => e.IdUser).HasColumnName("idUser");
+
+                entity.Property(e => e.IntStatus)
+                    .HasColumnName("intStatus")
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.VarBookName)
+                    .IsRequired()
+                    .HasColumnName("varBookName")
+                    .HasMaxLength(150)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VarPriority)
+                    .IsRequired()
+                    .HasColumnName("varPriority")
+                    .HasMaxLength(2)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.VarUserName)
+                    .IsRequired()
+                    .HasColumnName("varUserName")
+                    .HasMaxLength(100)
                     .IsUnicode(false);
             });
 

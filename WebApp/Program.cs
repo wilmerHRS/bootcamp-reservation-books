@@ -30,6 +30,14 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+{
+    // cors global
+    app.UseCors(x => x
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader());
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

@@ -125,9 +125,13 @@ namespace BookServiceReference
         
         private System.Nullable<bool> IsAvailableField;
         
+        private System.Nullable<bool> ReservedByMeField;
+        
         private System.Nullable<int> StatusField;
         
         private string TitleField;
+        
+        private System.Nullable<bool> WaitReservedByMeField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
         public string Code
@@ -195,6 +199,19 @@ namespace BookServiceReference
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> ReservedByMe
+        {
+            get
+            {
+                return this.ReservedByMeField;
+            }
+            set
+            {
+                this.ReservedByMeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public System.Nullable<int> Status
         {
             get
@@ -219,6 +236,19 @@ namespace BookServiceReference
                 this.TitleField = value;
             }
         }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> WaitReservedByMe
+        {
+            get
+            {
+                return this.WaitReservedByMeField;
+            }
+            set
+            {
+                this.WaitReservedByMeField = value;
+            }
+        }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -227,24 +257,9 @@ namespace BookServiceReference
     public partial class ReservationRequest : object
     {
         
-        private System.Nullable<System.DateTime> DateReservationField;
-        
         private int IdBookField;
         
         private int IdUserField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<System.DateTime> DateReservation
-        {
-            get
-            {
-                return this.DateReservationField;
-            }
-            set
-            {
-                this.DateReservationField = value;
-            }
-        }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
         public int IdBook
@@ -275,6 +290,43 @@ namespace BookServiceReference
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.1.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ResponseDtoOfReservationResponseyPiqVG5T", Namespace="http://schemas.datacontract.org/2004/07/WcfService.Dto.Base")]
+    public partial class ResponseDtoOfReservationResponseyPiqVG5T : object
+    {
+        
+        private BookServiceReference.ReservationResponse dataField;
+        
+        private string messageField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public BookServiceReference.ReservationResponse data
+        {
+            get
+            {
+                return this.dataField;
+            }
+            set
+            {
+                this.dataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string message
+        {
+            get
+            {
+                return this.messageField;
+            }
+            set
+            {
+                this.messageField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.1.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="ReservationResponse", Namespace="http://schemas.datacontract.org/2004/07/WcfService.Dto.Reservation")]
     public partial class ReservationResponse : object
     {
@@ -283,13 +335,17 @@ namespace BookServiceReference
         
         private System.DateTime CreatedAtField;
         
-        private System.Nullable<System.DateTime> DateReservationField;
+        private System.DateTime DateReservationField;
+        
+        private System.DateTime DateReservationEndField;
         
         private int IdBookField;
         
-        private int IdResevationField;
+        private System.Nullable<int> IdResevationField;
         
         private int IdUserField;
+        
+        private System.Nullable<bool> IsActiveField;
         
         private System.Nullable<int> StatusField;
         
@@ -322,7 +378,7 @@ namespace BookServiceReference
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<System.DateTime> DateReservation
+        public System.DateTime DateReservation
         {
             get
             {
@@ -331,6 +387,19 @@ namespace BookServiceReference
             set
             {
                 this.DateReservationField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.DateTime DateReservationEnd
+        {
+            get
+            {
+                return this.DateReservationEndField;
+            }
+            set
+            {
+                this.DateReservationEndField = value;
             }
         }
         
@@ -348,7 +417,7 @@ namespace BookServiceReference
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int IdResevation
+        public System.Nullable<int> IdResevation
         {
             get
             {
@@ -370,6 +439,19 @@ namespace BookServiceReference
             set
             {
                 this.IdUserField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> IsActive
+        {
+            get
+            {
+                return this.IsActiveField;
+            }
+            set
+            {
+                this.IsActiveField = value;
             }
         }
         
@@ -409,16 +491,16 @@ namespace BookServiceReference
         System.Threading.Tasks.Task<BookServiceReference.BookResponseDtoEF[]> GetAllEFAsync();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IBookService/GetAll", ReplyAction="http://tempuri.org/IBookService/GetAllResponse")]
-        System.Threading.Tasks.Task<BookServiceReference.BookResponseDto[]> GetAllAsync();
+        System.Threading.Tasks.Task<BookServiceReference.BookResponseDto[]> GetAllAsync(int idUser);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IBookService/GetSearch", ReplyAction="http://tempuri.org/IBookService/GetSearchResponse")]
-        System.Threading.Tasks.Task<BookServiceReference.BookResponseDto[]> GetSearchAsync(string search);
+        System.Threading.Tasks.Task<BookServiceReference.BookResponseDto[]> GetSearchAsync(string search, int idUser);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IBookService/GetById", ReplyAction="http://tempuri.org/IBookService/GetByIdResponse")]
-        System.Threading.Tasks.Task<BookServiceReference.BookResponseDto> GetByIdAsync(int idBook);
+        System.Threading.Tasks.Task<BookServiceReference.BookResponseDto> GetByIdAsync(int idBook, int idUser);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IBookService/CreateReservation", ReplyAction="http://tempuri.org/IBookService/CreateReservationResponse")]
-        System.Threading.Tasks.Task<BookServiceReference.ReservationResponse> CreateReservationAsync(BookServiceReference.ReservationRequest reservation);
+        System.Threading.Tasks.Task<BookServiceReference.ResponseDtoOfReservationResponseyPiqVG5T> CreateReservationAsync(BookServiceReference.ReservationRequest reservation);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.1.0")]
@@ -476,22 +558,22 @@ namespace BookServiceReference
             return base.Channel.GetAllEFAsync();
         }
         
-        public System.Threading.Tasks.Task<BookServiceReference.BookResponseDto[]> GetAllAsync()
+        public System.Threading.Tasks.Task<BookServiceReference.BookResponseDto[]> GetAllAsync(int idUser)
         {
-            return base.Channel.GetAllAsync();
+            return base.Channel.GetAllAsync(idUser);
         }
         
-        public System.Threading.Tasks.Task<BookServiceReference.BookResponseDto[]> GetSearchAsync(string search)
+        public System.Threading.Tasks.Task<BookServiceReference.BookResponseDto[]> GetSearchAsync(string search, int idUser)
         {
-            return base.Channel.GetSearchAsync(search);
+            return base.Channel.GetSearchAsync(search, idUser);
         }
         
-        public System.Threading.Tasks.Task<BookServiceReference.BookResponseDto> GetByIdAsync(int idBook)
+        public System.Threading.Tasks.Task<BookServiceReference.BookResponseDto> GetByIdAsync(int idBook, int idUser)
         {
-            return base.Channel.GetByIdAsync(idBook);
+            return base.Channel.GetByIdAsync(idBook, idUser);
         }
         
-        public System.Threading.Tasks.Task<BookServiceReference.ReservationResponse> CreateReservationAsync(BookServiceReference.ReservationRequest reservation)
+        public System.Threading.Tasks.Task<BookServiceReference.ResponseDtoOfReservationResponseyPiqVG5T> CreateReservationAsync(BookServiceReference.ReservationRequest reservation)
         {
             return base.Channel.CreateReservationAsync(reservation);
         }

@@ -1,4 +1,5 @@
 ﻿using BookServiceReference;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -55,6 +56,21 @@ namespace WebApp.Controllers
                 AccessToken = token,
                 User = user,
             });
+        }
+
+        [Authorize]
+        public ActionResult verifyToken()
+        {
+            var user = new UserResponseDto
+            {
+                IdUser = Convert.ToInt32(User.FindFirstValue(JwtRegisteredClaimNames.Jti)),
+                FirstName = User.FindFirstValue(JwtRegisteredClaimNames.Name),
+                LastName = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                Email = User.FindFirstValue(ClaimTypes.Email),
+                Status = 1
+            };
+
+            return Ok(user);
         }
     }
 }

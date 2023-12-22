@@ -11,6 +11,7 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Text;
 using System.Web.Configuration;
+using WcfService.Dto.Base;
 using WcfService.Dto.Book;
 using WcfService.Dto.Reservation;
 using WcfService.Entities;
@@ -43,8 +44,8 @@ namespace WcfService.Services.Book
             return books; // quitar
         }
 
-        // Obtener todos los libros
-        public List<BookResponseDto> GetAll()
+        // (SERVICIO) Obtener todos los libros
+        public List<BookResponseDto> GetAll(int idUser = 0)
         {
             List<BookResponseDto> books = null;
 
@@ -52,6 +53,7 @@ namespace WcfService.Services.Book
             {
                 SqlCommand cmd = new SqlCommand("SP_GetAll_Books", _connection);
                 cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@IdUser", idUser);
 
                 if (_connection.State == ConnectionState.Closed) _connection.Open();
 
@@ -74,6 +76,8 @@ namespace WcfService.Services.Book
                         Code = dr["varCode"].ToString(),
                         Status = Convert.ToInt32(dr["intStatus"]),
                         IsAvailable = Convert.ToBoolean(dr["bitIsAvailable"]),
+                        ReservedByMe = Convert.ToBoolean(dr["bitReservedByMe"]),
+                        WaitReservedByMe = Convert.ToBoolean(dr["bitWaitReservedByMe"]),
                         DateReservation = this.ConvertDate(dr["dtimeDateReservation"].ToString()),
                         CreatedAt = Convert.ToDateTime(dr["dtimeCreatedAt"])
                     };
@@ -89,8 +93,8 @@ namespace WcfService.Services.Book
             return books;
         }
 
-        // Obtener libros por busqueda
-        public List<BookResponseDto> GetSearch(string search = "")
+        // (SERVICIO) Obtener libros por busqueda
+        public List<BookResponseDto> GetSearch(string search = "", int idUser = 0)
         {
             List<BookResponseDto> books = null;
 
@@ -99,6 +103,7 @@ namespace WcfService.Services.Book
                 SqlCommand cmd = new SqlCommand("SP_GetSearch_Books", _connection);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@VarSearch", search ?? "");
+                cmd.Parameters.AddWithValue("@IdUser", idUser);
 
                 if (_connection.State == ConnectionState.Closed) _connection.Open();
 
@@ -120,6 +125,8 @@ namespace WcfService.Services.Book
                         Code = dr["varCode"].ToString(),
                         Status = Convert.ToInt32(dr["intStatus"]),
                         IsAvailable = Convert.ToBoolean(dr["bitIsAvailable"]),
+                        ReservedByMe = Convert.ToBoolean(dr["bitReservedByMe"]),
+                        WaitReservedByMe = Convert.ToBoolean(dr["bitWaitReservedByMe"]),
                         DateReservation = this.ConvertDate(dr["dtimeDateReservation"].ToString()),
                         CreatedAt = Convert.ToDateTime(dr["dtimeCreatedAt"])
                     };
@@ -134,8 +141,8 @@ namespace WcfService.Services.Book
             return books;
         }
 
-        // Obtener por Id
-        public BookResponseDto GetById(int idBook)
+        // (SERVICIO) Obtener por Id
+        public BookResponseDto GetById(int idBook, int idUser = 0)
         {
             BookResponseDto book = null;
 
@@ -144,6 +151,7 @@ namespace WcfService.Services.Book
                 SqlCommand cmd = new SqlCommand("SP_GetById_Books", _connection);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@IntIdBook", idBook);
+                cmd.Parameters.AddWithValue("@IdUser", idUser);
 
                 if (_connection.State == ConnectionState.Closed) _connection.Open();
 
@@ -164,6 +172,8 @@ namespace WcfService.Services.Book
                         Code = dr["varCode"].ToString(),
                         Status = Convert.ToInt32(dr["intStatus"]),
                         IsAvailable = Convert.ToBoolean(dr["bitIsAvailable"]),
+                        ReservedByMe = Convert.ToBoolean(dr["bitReservedByMe"]),
+                        WaitReservedByMe = Convert.ToBoolean(dr["bitWaitReservedByMe"]),
                         DateReservation = this.ConvertDate(dr["dtimeDateReservation"].ToString()),
                         CreatedAt = Convert.ToDateTime(dr["dtimeCreatedAt"])
                     };
@@ -177,50 +187,117 @@ namespace WcfService.Services.Book
             return book;
         }
 
-        // Crear una reservacion
-        public ReservationResponse CreateReservation(ReservationRequest reservation)
+        // (SERVICIO) Crear una reservacion
+        public ResponseDto<ReservationResponse> CreateReservation(ReservationRequest reservation)
         {
-            ReservationResponse res = null;
+            ResponseDto<ReservationResponse> res = null;
 
             try
             {
-                var book = this.GetById(reservation.IdBook);
-                if(book == null || (bool)!book.IsAvailable) return res; // no reservar un libro reservado
+                ReservationResponse resBody = null;
+                string message = "";
+
+                // VERIFICAR DATOS
+                var book = this.GetById(reservation.IdBook, reservation.IdUser);
+                // no reservar un libro no existente, no disponible, ya reservado por nosotros o en cola por nosotros
+                if (book == null || (bool)!book.IsAvailable || book.ReservedByMe == true || book.WaitReservedByMe == true) return res;
 
                 var user = this.GetUserById(reservation.IdUser);
                 if(user == null) return res; // no reservar con usuario bloqueado o no existente
 
-                // (RESERVAR)
-                var data = new Treservations
-                {
-                    IdBook = reservation.IdBook,
-                    IdUser = reservation.IdUser,
-                    VarBookName = book.Title,
-                    VarUserName = $"{user.VarFirstName} {user.VarLastName}",
-                    DtimeDateReservation = reservation.DateReservation,
-                };
+                // verificar si no hay 3 o más en cola
+                var quantityMaxWait = 3;
+                var quantityWait = this.CountWaitReservationsById(reservation.IdBook);
 
-                _dbContext.Treservations.Add(data);
-                _dbContext.SaveChanges();
+                if(quantityWait >= quantityMaxWait) return res;
+
+                // obtener reservacion para verificar si hay una
+                var getReservation = this.GetReservationById(reservation.IdBook);
+
+                if(quantityWait == 0 && getReservation == null)
+                {
+                    // generar date
+                    var dateReservation = this.GenerateDateTimeReservation(reservation.IdBook);
+
+                    // (RESERVAR)
+                    var data = new Treservations
+                    {
+                        IdBook = reservation.IdBook,
+                        IdUser = reservation.IdUser,
+                        VarBookName = book.Title,
+                        VarUserName = $"{user.VarFirstName} {user.VarLastName}",
+                        DtimeDateReservation = dateReservation,
+                        DtimeDateReservationEnd = dateReservation.AddDays(1),
+                    };
+
+                    _dbContext.Treservations.Add(data);
+                    _dbContext.SaveChanges();
+
+                    message = "reservado";
+
+                    // Crear respuesta
+                    resBody = new ReservationResponse
+                    {
+                        IdResevation = data.IdResevation,
+                        IdBook = data.IdBook,
+                        IdUser = data.IdUser,
+                        BookName = data.VarBookName,
+                        UserName = data.VarUserName,
+                        Status = data.IntStatus,
+                        IsActive = data.BitIsActive,
+                        DateReservation = data.DtimeDateReservation,
+                        DateReservationEnd = data.DtimeDateReservationEnd,
+                        CreatedAt = data.DtimeCreatedAt
+                    };
+                }
+                else
+                {
+                    // (GUARDAR EN COLA)
+                    var dateReservation = this.GenerateDateTimeReservation(reservation.IdBook, true);
+
+                    var data = new TwaitReservations
+                    {
+                        IdBook = reservation.IdBook,
+                        IdUser = reservation.IdUser,
+                        VarBookName = book.Title,
+                        VarUserName = $"{user.VarFirstName} {user.VarLastName}",
+                        VarPriority = $"P{quantityWait + 1}",
+                        DtimeDateReservation = dateReservation,
+                        DtimeDateReservationEnd = dateReservation.AddDays(1),
+                    };
+
+                    _dbContext.TwaitReservations.Add(data);
+                    _dbContext.SaveChanges();
+
+                    message = $"en cola {data.VarPriority}";
+
+                    // Crear respuesta
+                    resBody = new ReservationResponse
+                    {
+                        IdResevation = 0,
+                        IdBook = data.IdBook,
+                        IdUser = data.IdUser,
+                        BookName = data.VarBookName,
+                        UserName = data.VarUserName,
+                        Status = data.IntStatus,
+                        IsActive = data.BitIsActive,
+                        DateReservation = data.DtimeDateReservation,
+                        DateReservationEnd = data.DtimeDateReservationEnd,
+                        CreatedAt = data.DtimeCreatedAt
+                    };
+                }
+
+                quantityWait = this.CountWaitReservationsById(reservation.IdBook);
 
                 // Actualizar libro a (NO DISPONIBLE)
-                var updateBook = _dbContext.Tbooks.FirstOrDefault(x => x.IdBook == book.IdBook);
+                if(quantityWait >= quantityMaxWait) this.UpdateBookNotAvailable(reservation.IdBook);
 
-                updateBook.BitIsAvailable = false;
-                _dbContext.SaveChangesAsync();
-
-                // Crear respuesta
-                res = new ReservationResponse
+                res = new ResponseDto<ReservationResponse>
                 {
-                    IdResevation = data.IdResevation,
-                    IdBook = data.IdBook,
-                    IdUser = data.IdUser,
-                    BookName = data.VarBookName,
-                    UserName = data.VarUserName,
-                    Status = data.IntStatus,
-                    DateReservation = data.DtimeDateReservation,
-                    CreatedAt = data.DtimeCreatedAt
+                    data = resBody,
+                    message = message
                 };
+
             }
             catch (Exception)
             {
@@ -247,6 +324,68 @@ namespace WcfService.Services.Book
                 : (DateTime?)null;
 
             return parseDateReservation;
+        }
+    
+        // actualizar a libro no disponible
+        private Tbooks UpdateBookNotAvailable(int idBook)
+        {
+            var data = _dbContext.Tbooks
+                .FirstOrDefault(x => x.IdBook == idBook && x.BitIsDeleted == false);
+
+            data.BitIsAvailable = false;
+            _dbContext.SaveChanges();
+
+            return data;
+        }
+
+        // obtener 
+        private int CountWaitReservationsById(int idBook)
+        {
+            var data = _dbContext.TwaitReservations
+                .Where(tw => tw.IdBook == idBook && tw.BitIsActive == true && tw.BitIsDeleted == false)
+                .Count();
+
+            return data;
+        }
+
+        // obtener ultimo en cola
+        private TwaitReservations GetLastWaitReservationById(int idBook)
+        {
+            var data = _dbContext.TwaitReservations
+                .Where(tw => tw.IdBook == idBook && tw.BitIsActive == true && tw.BitIsDeleted == false)
+                .OrderByDescending(tw => tw.DtimeDateReservationEnd)
+                .FirstOrDefault();
+
+            return data;
+        }
+
+        // generar fecha de reservacion o para cola
+        private DateTime GenerateDateTimeReservation(int idBook, bool isWait = false)
+        {
+            DateTime dateReservation = DateTime.Now;
+
+            if (isWait)
+            {
+                var lastWaitReservation = this.GetLastWaitReservationById(idBook);
+
+                dateReservation = (lastWaitReservation != null) 
+                    ? lastWaitReservation.DtimeDateReservationEnd 
+                    : dateReservation.AddDays(1);
+            }
+
+            dateReservation = new DateTime(dateReservation.Year, dateReservation.Month, dateReservation.Day);
+
+            return dateReservation;
+        }
+
+        // ontener reservacion por id de libro
+        private Treservations GetReservationById(int idBook)
+        {
+            var data = _dbContext.Treservations
+                .Where(r => r.IdBook == idBook && r.BitIsActive == true && r.BitIsDeleted == false)
+                .FirstOrDefault();
+
+            return data;
         }
     }
 }

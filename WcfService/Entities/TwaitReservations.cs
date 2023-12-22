@@ -7,13 +7,14 @@ using System.Collections.Generic;
 
 namespace WcfService.Entities
 {
-    public partial class Treservations
+    public partial class TwaitReservations
     {
-        public int IdResevation { get; set; }
+        public int IdWaitReservation { get; set; }
         public int IdUser { get; set; }
         public int IdBook { get; set; }
         public string VarUserName { get; set; }
         public string VarBookName { get; set; }
+        public string VarPriority { get; set; }
         public DateTime DtimeDateReservation { get; set; }
         public DateTime DtimeDateReservationEnd { get; set; }
         public int? IntStatus { get; set; }
@@ -21,8 +22,5 @@ namespace WcfService.Entities
         public DateTime DtimeCreatedAt { get; set; }
         public DateTime DtimeUpdatedAt { get; set; }
         public bool? BitIsDeleted { get; set; }
-
-        public virtual Tbooks IdBookNavigation { get; set; }
-        public virtual Tusers IdUserNavigation { get; set; }
     }
 }

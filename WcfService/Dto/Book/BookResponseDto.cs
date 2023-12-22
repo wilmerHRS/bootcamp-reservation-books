@@ -12,6 +12,8 @@ namespace WcfService.Dto.Book
         public string Code { get; set; }
         public int? Status { get; set; }
         public bool? IsAvailable { get; set; }
+        public bool? ReservedByMe { get; set; }
+        public bool? WaitReservedByMe { get; set; }
         public DateTime? DateReservation { get; set; }
         public DateTime CreatedAt { get; set; }
     }
