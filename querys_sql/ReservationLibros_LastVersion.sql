@@ -133,7 +133,7 @@ GO
 
 -- (INICIO) CREAR STORED PROCEDURE
 -- -- OBTENER LOS LIBROS	
-ALTER PROCEDURE SP_GetAll_Books (
+CREATE PROCEDURE SP_GetAll_Books (
 	@IdUser INT = 0
 )
 AS
@@ -163,7 +163,7 @@ AS
 GO
 
 -- BUSCAR LIBROS
-ALTER PROCEDURE SP_GetSearch_Books (
+CREATE PROCEDURE SP_GetSearch_Books (
 	@VarSearch VARCHAR(100),
 	@IdUser INT = 0
 )
@@ -196,7 +196,7 @@ AS
 GO
 
 -- -- OBTENER LIBRO POR ID	
-ALTER PROCEDURE SP_GetById_Books (
+CREATE PROCEDURE SP_GetById_Books (
 	@IntIdBook INT,
 	@IdUser INT = 0
 )
@@ -226,6 +226,75 @@ AS
 	) TWaitReservations on TWaitReservations.idBook = TReservations.idBook
 	WHERE TBooks.IdBook = @IntIdBook
 	AND TBooks.BitIsDeleted = 0
+GO
+
+-- CRONJOB (liberacion de libros, reserva de forma automática)
+CREATE PROCEDURE SP_CronJob
+AS
+	DECLARE @todayDate DATE = GETDATE();
+	DECLARE @countWait INT = 0;
+
+	-- obtener cantidad de reservas en cola
+	SELECT DISTINCT @countWait = COUNT(1) FROM TWaitReservations
+	WHERE dtimeDateReservation = @todayDate
+
+	-- verificar si hay o no reservas en cola
+	IF @countWait > 0
+		BEGIN
+			-- pasar los datos de TWaitReservations a TReservations
+			INSERT INTO TReservations
+				(idUser, idBook, varUserName, varBookName, dtimeDateReservation, dtimeDateReservationEnd)
+			SELECT 
+			idUser,
+			idBook,
+			varUserName,
+			varBookName,
+			dtimeDateReservation,
+			dtimeDateReservationEnd
+			FROM
+			TWaitReservations
+			WHERE bitIsActive = 1
+			AND dtimeDateReservation = @todayDate
+			AND BitIsDeleted = 0
+
+			-- en TReservations actualizar bitIsActive a false
+			UPDATE TReservations
+			SET bitIsActive = 0
+			WHERE dtimeDateReservation < @todayDate
+			AND bitIsActive = 1
+			AND BitIsDeleted = 0
+
+			-- en TWaitReservations actualizar varPriority
+			UPDATE TWaitReservations
+			SET varPriority = 
+				CASE 
+					WHEN varPriority = 'P2' THEN 'P1'
+					WHEN varPriority = 'P3' THEN 'P2'
+				END
+			WHERE dtimeDateReservation > @todayDate
+			AND bitIsActive = 1
+			AND BitIsDeleted = 0
+
+			-- en TWaitReservations actualizar bitIsActive a false (si era P1)
+			UPDATE TWaitReservations
+			SET bitIsActive = 0
+			WHERE dtimeDateReservation <= @todayDate
+			AND varPriority = 'P1'
+			AND bitIsActive = 1
+			AND BitIsDeleted = 0
+
+			-- actualizar libros (habilitado)
+			UPDATE TBooks
+			SET bitIsAvailable = 1
+			WHERE bitIsAvailable = 0
+			AND BitIsDeleted = 0
+
+			SELECT 'Se han actualizado los datos correctamente'  as message, 1 as status
+		END
+	ELSE
+		BEGIN
+			SELECT 'Los datos ya estan actualizados' as message, 0 as status
+		END
 GO
 -- (FIN) CREAR STORED PROCEDURE
 
