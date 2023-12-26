@@ -307,5 +307,10 @@ GO
 EXECUTE SP_GetById_Books @IntIdBook = 2, @IdUser = 1
 GO
 
+-- ejecutar cronjob
+EXECUTE SP_CronJob
+GO
+
 SELECT * FROM TBooks
 GO
+
